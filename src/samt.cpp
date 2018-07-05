@@ -13,12 +13,15 @@
 
 namespace {
 
-std::mutex inputLock, outputLock;
+int count = 0;
+std::mutex countLock, inputLock, outputLock;
 
 bool valid(const jhu::thrax::PhrasalRule& rule) {
   return !isNonlexicalXRule(rule)
       && !isAbstract(rule)
-      && withinTokenLimit(rule);
+      && withinTokenLimit(rule)
+      && !isSlashedRule(rule)
+      && !isConcatRule(rule);
 }
 
 bool process() {
@@ -31,7 +34,7 @@ bool process() {
   }
   try {
     auto asp = jhu::thrax::readAlignedSentencePair<false, true>(line);
-    auto initial = jhu::thrax::allConsistentPairs(asp, 12);
+    auto initial = jhu::thrax::allConsistentPairs(asp, 20);
     auto tree = jhu::thrax::readTree(jhu::thrax::fields(line)[1]);
     auto label = jhu::thrax::SAMTLabeler{std::move(tree)};
     std::ostringstream out;
@@ -44,6 +47,14 @@ bool process() {
     std::cout << out.str();
   } catch (std::exception& e) {
     std::cerr << e.what() << ' ' << line << '\n';
+  }
+  {
+    std::lock_guard g(countLock);
+    count++;
+    if (count % 1000 == 0) {
+      std::lock_guard g(outputLock);
+      std::cerr << count << std::endl;
+    }
   }
   return true;
 }

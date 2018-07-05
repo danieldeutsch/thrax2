@@ -5,6 +5,7 @@
 #include <functional>
 #include <numeric>
 #include <ostream>
+#include <string>
 #include <string_view>
 #include <vector>
 
@@ -15,7 +16,7 @@
 
 namespace jhu::thrax {
 
-constexpr size_t kMaxNonterminals = 4;
+constexpr size_t kMaxNonterminals = 2;
 using Rhs = std::array<NT, kMaxNonterminals>;
 
 struct PhrasalRule {

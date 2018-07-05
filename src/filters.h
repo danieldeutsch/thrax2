@@ -9,8 +9,8 @@ inline bool isNonlexicalXRule(const PhrasalRule& rule) {
 }
 
 inline bool withinTokenLimit(const PhrasalRule& rule) {
-  constexpr int kLexicalLimit = 10;
-  constexpr int kNonlexLimit = 5;
+  constexpr int kLexicalLimit = 6;
+  constexpr int kNonlexLimit = 6;
   bool lex = rule.lexical();
   auto src = rule.numTokens<true>();
   auto tgt = rule.numTokens<false>();
@@ -27,6 +27,39 @@ inline bool isAbstract(const PhrasalRule& rule) {
     return false;
   }
   return rule.numTokens<true>() == nts && rule.numTokens<false>() == nts;
+}
+
+inline bool isSlashedNT(const NT& nt) {
+  return nt.label.find("/") != std::string::npos ||
+         nt.label.find("\\") != std::string::npos;
+}
+
+inline bool isSlashedRule(const PhrasalRule& rule) {
+  if (isSlashedNT(rule.lhs)) {
+    return true;
+  }
+  return std::any_of(
+      rule.nts.begin(),
+      rule.nts.end(),
+      [](const auto& nt) {
+        return isSlashedNT(nt);
+      });
+}
+
+inline bool isConcatNT(const NT& nt) {
+  return nt.label.find("+") != std::string::npos;
+}
+
+inline bool isConcatRule(const PhrasalRule& rule) {
+  if (isConcatNT(rule.lhs)) {
+    return true;
+  }
+  return std::any_of(
+      rule.nts.begin(),
+      rule.nts.end(),
+      [](const auto& nt) {
+        return isConcatNT(nt);
+      });
 }
 
 }
