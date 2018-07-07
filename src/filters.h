@@ -9,8 +9,8 @@ inline bool isNonlexicalXRule(const PhrasalRule& rule) {
 }
 
 inline bool withinTokenLimit(const PhrasalRule& rule) {
-  constexpr int kLexicalLimit = 6;
-  constexpr int kNonlexLimit = 6;
+  constexpr int kLexicalLimit = 7;
+  constexpr int kNonlexLimit = 7;
   bool lex = rule.lexical();
   auto src = rule.numTokens<true>();
   auto tgt = rule.numTokens<false>();
