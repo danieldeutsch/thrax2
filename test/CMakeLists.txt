@@ -6,10 +6,17 @@ add_executable(all_tests
   sentence_test.cpp
   tree_test.cpp
 )
+add_executable(dep_tests
+  dep_test.cpp
+)
 target_include_directories(all_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(all_tests PRIVATE gtest gtest_main thrax2)
 add_subdirectory(gtest)
 gtest_discover_tests(all_tests)
+
+target_include_directories(dep_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(dep_tests PRIVATE gtest gtest_main thrax2)
+gtest_discover_tests(dep_tests)
 
 add_executable(hiero_console hiero_console.cpp)
 target_include_directories(hiero_console PRIVATE ${PROJECT_SOURCE_DIR}/src)

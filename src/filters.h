@@ -62,4 +62,20 @@ inline bool isConcatRule(const PhrasalRule& rule) {
       });
 }
 
+inline bool isDependencyNT(const NT& nt) {
+  return nt.label.find("_") != std::string::npos;
+}
+
+inline bool isDependencyRule(const PhrasalRule& rule) {
+  if (isDependencyNT(rule.lhs)) {
+    return true;
+  }
+  return std::any_of(
+      rule.nts.begin(),
+      rule.nts.end(),
+      [](const auto& nt) {
+        return isDependencyNT(nt);
+      });
+}
+
 }

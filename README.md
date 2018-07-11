@@ -9,6 +9,17 @@ First, in your build directory, use `ccmake` or `cmake -D` to set `CMAKE_BUILD_T
 
 Note: `thrax2` requires a C++17-compliant compiler.
 
+## Mac OS
+
+To install a C++17-compliant compiler on Mac OS, use brew:
+```
+brew install gcc@7
+```
+Then, when point ccmake to the correct compiler
+```
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/local/Cellar/gcc\@7/7.3.0/bin/g++-7 ..
+```
+
 ### Running
 
 The binaries `src/{hiero,samt}` generate Hiero and SAMT grammars, respectively. They will read an aligned parallel corpus from stdin and produce rules on stdout. The rules are not unique. Typically we use the many `scripts/filter_*` scripts to reduce the rules of interest. The stream of rules should then be piped to `scripts/score` to produce feature scores for a unique set of rules.
