@@ -5,6 +5,8 @@
 #include <string_view>
 #include <vector>
 
+#include "sentence.h" // AlignedSentencePair, fields, split
+
 namespace jhu::thrax {
 
 struct DepNode {
@@ -16,10 +18,9 @@ struct DepNode {
 
 using DepTree = std::vector<DepNode>;
 
-
 // "(the,DT,2,det),(president,NNP,0,root)" ->
 // ["the,DT,2,det", "president,NNP,0,root"]
-inline std::vector<std::string_view> split_into_groups(std::string_view line) {
+inline std::vector<std::string_view> splitIntoGroups(std::string_view line) {
   // Remove the first '(' and last ')'
   line.remove_prefix(1);
   line.remove_suffix(1);
@@ -38,7 +39,7 @@ inline std::vector<std::string_view> split_into_groups(std::string_view line) {
 }
 
 // "the,DT,2,det" -> DepNode("the", "DT", 2, "det")
-inline DepTree parse_nodes(std::vector<std::string_view> groups) {
+inline DepTree parseNodes(std::vector<std::string_view> groups) {
   DepTree tree;
   for (auto group : groups) {
     // Parse the group in reverse to avoid some complication with commas
@@ -59,6 +60,28 @@ inline DepTree parse_nodes(std::vector<std::string_view> groups) {
     tree.push_back(DepNode{token, pos, label, head});
   }
   return tree;
+}
+
+// (the,DT,2,det),(president,NNP,0,root) -> ["the", "president"]
+inline std::vector<std::string_view> parseDepTokens(std::string_view line) {
+  auto groups = splitIntoGroups(line);
+  auto tree = parseNodes(groups);
+  std::vector<std::string_view> tokens;
+  tokens.reserve(tree.size());
+  for (auto node : tree) {
+    tokens.push_back(node.token);
+  }
+  return tokens;
+}
+
+AlignedSentencePair readAlignedDepSentencePair(std::string_view line) {
+  auto fs = fields(line);
+  static_assert(std::tuple_size<decltype(fs)>::value == 3);
+  return {
+    tokens<false>(fs[0]),
+    parseDepTokens(fs[1]),
+    readAlignment(fs[2])
+  };
 }
 
 }
