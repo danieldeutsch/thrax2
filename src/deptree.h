@@ -62,6 +62,11 @@ inline DepTree parseNodes(std::vector<std::string_view> groups) {
   return tree;
 }
 
+inline DepTree readDepTree(std::string_view line) {
+  auto groups = splitIntoGroups(line);
+  return parseNodes(groups);
+}
+
 // (the,DT,2,det),(president,NNP,0,root) -> ["the", "president"]
 inline std::vector<std::string_view> parseDepTokens(std::string_view line) {
   auto groups = splitIntoGroups(line);

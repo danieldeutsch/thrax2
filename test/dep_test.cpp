@@ -28,19 +28,16 @@ TEST(DepTreeTests, SplitIntoGroups) {
 }
 
 TEST(DepTreeTests, ParseNodes) {
-  auto groups = splitIntoGroups("(the,DT,2,det)");
-  auto tree = parseNodes(groups);
+  auto tree = readDepTree("(the,DT,2,det)");
   EXPECT_EQ(1, tree.size());
   expectNode("the", "DT", "det", 2, tree[0]);
 
-  groups = splitIntoGroups("(the,DT,2,det),(president,NNP,0,root)");
-  tree = parseNodes(groups);
+  tree = readDepTree("(the,DT,2,det),(president,NNP,0,root)");
   EXPECT_EQ(2, tree.size());
   expectNode("the", "DT", "det", 2, tree[0]);
   expectNode("president", "NNP", "root", 0, tree[1]);
 
-  groups = splitIntoGroups("(,,,,5,punct)");
-  tree = parseNodes(groups);
+  tree = readDepTree("(,,,,5,punct)");
   EXPECT_EQ(1, tree.size());
   expectNode(",", ",", "punct", 5, tree[0]);
 }
