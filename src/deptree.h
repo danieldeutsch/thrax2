@@ -1,10 +1,12 @@
 #pragma once
 
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <string_view>
 #include <vector>
 
+#include "phrase.h" // Span
 #include "sentence.h" // AlignedSentencePair, fields, split
 
 namespace jhu::thrax {
@@ -14,6 +16,7 @@ struct DepNode {
   std::string_view pos;
   std::string_view label;
   int head;
+  Span span{};
 };
 
 using DepTree = std::vector<DepNode>;
@@ -62,9 +65,34 @@ inline DepTree parseNodes(std::vector<std::string_view> groups) {
   return tree;
 }
 
+inline void addSpans(DepTree* tree) {
+  // Assign the default spans, which should be the span of the token
+  // itself. The Span object will default to (0, 0) because those are the
+  // default values for an integer.
+  for (unsigned int i = 0; i < tree->size(); i++) {
+    auto node = &tree->at(i);
+    node->span.start = i;
+    node->span.end = i + 1;
+  }
+
+  for (unsigned int i = 0; i < tree->size(); i++) {
+    auto node = &tree->at(i);
+    while (true) {
+      node->span.expand(i, i + 1);
+      // The nodes' heads are 1-indexed with 0 being the ROOT
+      if (node->head == 0) {
+        break;
+      }
+      node = &tree->at(node->head - 1);
+    }
+  }
+}
+
 inline DepTree readDepTree(std::string_view line) {
   auto groups = splitIntoGroups(line);
-  return parseNodes(groups);
+  auto tree = parseNodes(groups);
+  addSpans(&tree);
+  return tree;
 }
 
 // (the,DT,2,det),(president,NNP,0,root) -> ["the", "president"]

@@ -28,18 +28,18 @@ TEST(DepTreeTests, SplitIntoGroups) {
 }
 
 TEST(DepTreeTests, ParseNodes) {
-  auto tree = readDepTree("(the,DT,2,det)");
+  auto tree = readDepTree("(the,DT,0,det)");
   EXPECT_EQ(1, tree.size());
-  expectNode("the", "DT", "det", 2, tree[0]);
+  expectNode("the", "DT", "det", 0, tree[0]);
 
   tree = readDepTree("(the,DT,2,det),(president,NNP,0,root)");
   EXPECT_EQ(2, tree.size());
   expectNode("the", "DT", "det", 2, tree[0]);
   expectNode("president", "NNP", "root", 0, tree[1]);
 
-  tree = readDepTree("(,,,,5,punct)");
+  tree = readDepTree("(,,,,0,punct)");
   EXPECT_EQ(1, tree.size());
-  expectNode(",", ",", "punct", 5, tree[0]);
+  expectNode(",", ",", "punct", 0, tree[0]);
 }
 
 TEST(DepTreeTests, ParseDepTokens) {
@@ -47,6 +47,32 @@ TEST(DepTreeTests, ParseDepTokens) {
   EXPECT_EQ(2, tokens.size());
   EXPECT_EQ("the", tokens[0]);
   EXPECT_EQ("president", tokens[1]);
+}
+
+TEST(DepTreeTests, AddSpans) {
+  auto tree = readDepTree("(the,DT,2,det),(president,NNP,0,root)");
+  EXPECT_EQ(2, tree.size());
+  EXPECT_EQ(0, tree[0].span.start);
+  EXPECT_EQ(1, tree[0].span.end);
+  EXPECT_EQ(0, tree[1].span.start);
+  EXPECT_EQ(2, tree[1].span.end);
+
+  tree = readDepTree("(her,NNP,2,compound),(majesty,NNP,0,root),(the,DT,4,det),(queen,NNP,2,dep),(of,IN,6,case),(denmark,NNP,4,nmod),(,,,,6,punct)");
+  EXPECT_EQ(7, tree.size());
+  EXPECT_EQ(0, tree[0].span.start);
+  EXPECT_EQ(1, tree[0].span.end);
+  EXPECT_EQ(0, tree[1].span.start);
+  EXPECT_EQ(7, tree[1].span.end);
+  EXPECT_EQ(2, tree[2].span.start);
+  EXPECT_EQ(3, tree[2].span.end);
+  EXPECT_EQ(2, tree[3].span.start);
+  EXPECT_EQ(7, tree[3].span.end);
+  EXPECT_EQ(4, tree[4].span.start);
+  EXPECT_EQ(5, tree[4].span.end);
+  EXPECT_EQ(4, tree[5].span.start);
+  EXPECT_EQ(7, tree[5].span.end);
+  EXPECT_EQ(6, tree[6].span.start);
+  EXPECT_EQ(7, tree[6].span.end);
 }
 
 TEST(DepTreeTests, ReadAlignedDepSentencePair) {

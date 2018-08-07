@@ -31,6 +31,11 @@ struct Span {
     return result;
   }
 
+  void expand(int s, int e) {
+    start = std::min((int)start, s);
+    end = std::max((int)end, e);
+  }
+
   bool operator==(Span s) const {
     return start == s.start && end == s.end;
   }
