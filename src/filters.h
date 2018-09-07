@@ -8,6 +8,19 @@ inline bool isNonlexicalXRule(const PhrasalRule& rule) {
   return !rule.lexical() && rule.lhs.label == "X";
 }
 
+inline bool isXNT(const NT& nt) {
+  return nt.label == "X";
+}
+
+inline bool hasAnyXNT(const PhrasalRule& rule) {
+  return std::any_of(
+      rule.nts.begin(),
+      rule.nts.end(),
+      [](const auto& nt) {
+        return isXNT(nt);
+      });
+}
+
 inline bool withinTokenLimit(const PhrasalRule& rule) {
   constexpr int kLexicalLimit = 7;
   constexpr int kNonlexLimit = 7;

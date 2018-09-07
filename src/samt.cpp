@@ -21,7 +21,8 @@ bool valid(const jhu::thrax::PhrasalRule& rule) {
       && !isAbstract(rule)
       && withinTokenLimit(rule)
       && !isSlashedRule(rule)
-      && !isConcatRule(rule);
+      && !isConcatRule(rule)
+      && !hasAnyXNT(rule);
 }
 
 bool process() {
