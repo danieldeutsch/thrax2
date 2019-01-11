@@ -13,9 +13,12 @@ inline bool isXNT(const NT& nt) {
 }
 
 inline bool hasAnyXNT(const PhrasalRule& rule) {
+  if (isXNT(rule.lhs)) {
+    return true;
+  }
   return std::any_of(
       rule.nts.begin(),
-      rule.nts.end(),
+      rule.nts.begin() + rule.nextNT,
       [](const auto& nt) {
         return isXNT(nt);
       });
