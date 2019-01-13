@@ -52,7 +52,7 @@ bool process() {
   {
     std::lock_guard g(countLock);
     count++;
-    if (count % 1000 == 0) {
+    if (count % 10000 == 0) {
       std::lock_guard g(outputLock);
       std::cerr << count << std::endl;
     }
